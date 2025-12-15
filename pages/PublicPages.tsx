@@ -28,12 +28,12 @@ export const Home: React.FC<Props> = ({ artworks }) => {
             className="z-10"
          >
             <h1 className="text-[14vw] leading-[0.85] font-black tracking-tighter uppercase mix-blend-difference">
-                Visual<br/>
-                <span className="text-transparent stroke-text hover:text-[#00C896] transition-colors duration-500" style={{ WebkitTextStroke: '2px white' }}>Alchemist</span>
+                Adelaide<br/>
+                <span className="text-transparent stroke-text hover:text-[#008f4f] transition-colors duration-500" style={{ WebkitTextStroke: '2px white' }}>Davis</span>
             </h1>
             <p className="mt-8 text-xl md:text-2xl max-w-xl font-light text-neutral-400">
-                Digital architecture & void portraits. <br/>
-                Explorations in light, space, and silence.
+                A portfolio of my work. <br/>
+                Explorations in watercolor, acrylic, and sketching.
             </p>
          </motion.div>
          
@@ -44,7 +44,7 @@ export const Home: React.FC<Props> = ({ artworks }) => {
             className="absolute bottom-12 right-12 flex items-center gap-4 animate-pulse"
          >
             <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
-            <ArrowDown size={16} className="text-[#00C896]" />
+            <ArrowDown size={16} className="text-[#008f4f]" />
          </motion.div>
       </section>
 
@@ -80,7 +80,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                 <div className="flex gap-4 mt-8 md:mt-0 overflow-x-auto pb-2 md:pb-0">
                     <button 
                         onClick={() => setFilter('all')}
-                        className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all ${filter === 'all' ? `border-[#00C896] text-[#00C896]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
+                        className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all ${filter === 'all' ? `border-[#008f4f] text-[#008f4f]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
                     >
                         All
                     </button>
@@ -88,7 +88,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                         <button 
                             key={c.id}
                             onClick={() => setFilter(c.id)}
-                            className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all whitespace-nowrap ${filter === c.id ? `border-[#00C896] text-[#00C896]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
+                            className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all whitespace-nowrap ${filter === c.id ? `border-[#008f4f] text-[#008f4f]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
                         >
                             {c.name}
                         </button>
@@ -105,7 +105,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                                 {art.year}
                             </div>
                         </div>
-                        <h3 className="text-xl font-bold group-hover:text-[#00C896] transition-colors inline-flex items-center gap-2">
+                        <h3 className="text-xl font-bold group-hover:text-[#008f4f] transition-colors inline-flex items-center gap-2">
                             {art.title} <ArrowUpRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                         </h3>
                         <p className="text-neutral-500 text-sm mt-1">{art.medium}</p>
@@ -160,7 +160,7 @@ export const ArtworkDetail: React.FC<Props> = ({ artworks }) => {
                     </div>
                     <div>
                         <span className="block text-white font-bold mb-1">Availability</span>
-                        <span className={`inline-block px-2 py-1 rounded text-xs text-black font-bold uppercase ${artwork.availability === 'for_sale' ? 'bg-[#00C896]' : 'bg-white'}`}>
+                        <span className={`inline-block px-2 py-1 rounded text-xs text-black font-bold uppercase ${artwork.availability === 'for_sale' ? 'bg-[#008f4f]' : 'bg-white'}`}>
                             {artwork.availability.replace('_', ' ')}
                         </span>
                     </div>
@@ -201,7 +201,7 @@ export const ArtworkDetail: React.FC<Props> = ({ artworks }) => {
 // --- ABOUT & CONTACT ---
 export const About: React.FC = () => (
     <div className="pt-40 px-6 md:px-12 min-h-screen max-w-5xl mx-auto">
-        <h1 className="text-6xl font-black mb-12 text-[#00C896]">MANIFESTO</h1>
+        <h1 className="text-6xl font-black mb-12 text-[#008f4f]">MANIFESTO</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="text-xl leading-relaxed space-y-6 text-neutral-300">
                 <p>I believe that digital art is not just a replication of physical reality, but a portal into the unseen structures of our universe.</p>
@@ -240,16 +240,16 @@ export const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Name</label>
-                        <input type="text" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#00C896] focus:outline-none transition-colors" placeholder="Jane Doe" required />
+                        <input type="text" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors" placeholder="Jane Doe" required />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Email</label>
-                        <input type="email" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#00C896] focus:outline-none transition-colors" placeholder="jane@example.com" required />
+                        <input type="email" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors" placeholder="jane@example.com" required />
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Subject</label>
-                        <select className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#00C896] focus:outline-none transition-colors bg-black">
+                        <select className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors bg-black">
                             <option>Commission Inquiry</option>
                             <option>Print Purchase</option>
                             <option>Press / Collaboration</option>
@@ -258,11 +258,11 @@ export const Contact: React.FC = () => {
                 </div>
                  <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Message</label>
-                        <textarea rows={4} className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#00C896] focus:outline-none transition-colors resize-none" placeholder="Tell me about your project..." required />
+                        <textarea rows={4} className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors resize-none" placeholder="Tell me about your project..." required />
                 </div>
                 <button 
                     type="submit" 
-                    className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#00C896] transition-colors flex items-center gap-2"
+                    className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#008f4f] transition-colors flex items-center gap-2"
                 >
                     {submitted ? <><Check size={20} /> Sent</> : 'Send Message'}
                 </button>

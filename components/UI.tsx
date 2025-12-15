@@ -54,8 +54,8 @@ export const CustomCursor: React.FC = () => {
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
     >
         {viewMode === 'view' && <span className="text-black text-[10px] font-bold tracking-widest uppercase">View</span>}
-        {viewMode === 'drag' && <ArrowRight className="text-[#00C896] w-4 h-4" />}
-        {viewMode === 'play' && <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-[#00C896] border-b-[6px] border-b-transparent ml-1" />}
+        {viewMode === 'drag' && <ArrowRight className="text-[#008f4f] w-4 h-4" />}
+        {viewMode === 'play' && <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-[#008f4f] border-b-[6px] border-b-transparent ml-1" />}
     </motion.div>
   );
 };
@@ -81,12 +81,12 @@ export const Navigation: React.FC = () => {
     <>
       {/* Header Bar */}
       <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <Link to="/" className="text-white font-bold text-2xl tracking-tighter hover:text-[#00C896] transition-colors">
+        <Link to="/" className="text-white font-bold text-2xl tracking-tighter hover:text-[#008f4f] transition-colors">
           Adelaide
         </Link>
         <button
           onClick={() => setMenuOpen(!isMenuOpen)}
-          className="text-white hover:text-[#00C896] transition-colors flex items-center gap-2 group"
+          className="text-white hover:text-[#008f4f] transition-colors flex items-center gap-2 group"
         >
           <span className="uppercase text-xs tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Menu</span>
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -115,7 +115,7 @@ export const Navigation: React.FC = () => {
                     className="text-5xl md:text-7xl font-bold text-neutral-400 hover:text-white transition-colors relative group"
                   >
                     {item.label}
-                    <span className="absolute -bottom-2 left-0 w-0 h-1 bg-[#00C896] transition-all group-hover:w-full" />
+                    <span className="absolute -bottom-2 left-0 w-0 h-1 bg-[#008f4f] transition-all group-hover:w-full" />
                   </Link>
                 </motion.div>
               ))}
@@ -127,9 +127,9 @@ export const Navigation: React.FC = () => {
                transition={{ delay: 0.5 }}
                className="absolute bottom-12 flex gap-6"
             >
-                <Instagram className="text-white hover:text-[#00C896] cursor-pointer" />
-                <Twitter className="text-white hover:text-[#00C896] cursor-pointer" />
-                <Mail className="text-white hover:text-[#00C896] cursor-pointer" />
+                <Instagram className="text-white hover:text-[#008f4f] cursor-pointer" />
+                <Twitter className="text-white hover:text-[#008f4f] cursor-pointer" />
+                <Mail className="text-white hover:text-[#008f4f] cursor-pointer" />
             </motion.div>
           </motion.div>
         )}
@@ -143,7 +143,7 @@ export const Footer = () => (
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div>
             <h2 className="text-3xl font-bold mb-4">Let's create together.</h2>
-            <Link to="/contact" className="inline-flex items-center text-[#00C896] border-b border-[#00C896] pb-1 hover:opacity-80 transition-opacity">
+            <Link to="/contact" className="inline-flex items-center text-[#008f4f] border-b border-[#008f4f] pb-1 hover:opacity-80 transition-opacity">
                 Start a project <ArrowRight size={16} className="ml-2" />
             </Link>
         </div>

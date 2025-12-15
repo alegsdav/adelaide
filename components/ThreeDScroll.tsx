@@ -55,7 +55,7 @@ const Card: React.FC<CardProps> = ({ artwork, index, scrollYProgress, total }) =
                 />
                 <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                     <h3 className="text-4xl md:text-6xl font-bold text-white">{artwork.title}</h3>
-                    <p className="text-[#00C896] font-mono mt-2">{artwork.year} — {artwork.medium}</p>
+                    <p className="text-[#008f4f] font-mono mt-2">{artwork.year} — {artwork.medium}</p>
                 </div>
             </Link>
         </div>

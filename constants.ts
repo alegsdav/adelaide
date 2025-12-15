@@ -1,6 +1,6 @@
 import { Artwork, Collection } from './types';
 
-export const ACCENT_COLOR = '#00C896';
+export const ACCENT_COLOR = '#008f4f';
 
 export const COLLECTIONS: Collection[] = [
   { id: 'c1', name: 'Ethereal Structures', slug: 'ethereal', description: 'Explorations in digital architecture.' },

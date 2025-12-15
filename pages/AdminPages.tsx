@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Artwork, Collection } from '../types';
-import { Plus, Trash, Edit, Save, Upload, Sparkles } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
+import { Plus, Trash, Edit, Save, Upload } from 'lucide-react';
 
 interface Props {
   artworks: Artwork[];
@@ -55,40 +54,13 @@ export const AdminDashboard: React.FC<Props> = ({ artworks, setArtworks, collect
         }
     };
 
-    // AI Mock Assist
-    const handleAiGenerate = async () => {
-        try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            const prompt = `Generate a sophisticated, artistic description (max 50 words) for an artwork.
-            Title: ${formData.title || 'Untitled'}
-            Medium: ${formData.medium || 'Mixed Media'}
-            Year: ${formData.year || new Date().getFullYear()}
-            Keywords: ${formData.tags?.join(', ') || 'Abstract, Contemporary'}
-            `;
-
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
-            });
-
-            if (response.text) {
-                setFormData(prev => ({
-                    ...prev,
-                    description: response.text
-                }));
-            }
-        } catch (error) {
-            console.error("Gemini Generation Error:", error);
-            alert("Failed to generate description. Check console for details.");
-        }
-    };
 
     if (view === 'list') {
         return (
             <div className="pt-32 px-6 max-w-6xl mx-auto min-h-screen">
                 <div className="flex justify-between items-center mb-12">
                     <h1 className="text-4xl font-bold">Creator Dashboard</h1>
-                    <button onClick={handleNew} className="bg-[#00C896] text-black px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:opacity-90">
+                    <button onClick={handleNew} className="bg-[#008f4f] text-black px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:opacity-90">
                         <Plus size={20} /> New Artwork
                     </button>
                 </div>
@@ -143,7 +115,7 @@ export const AdminDashboard: React.FC<Props> = ({ artworks, setArtworks, collect
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <label className="block text-sm font-bold mb-2">Title</label>
-                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none" 
+                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none" 
                             value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/ /g, '-')})} required />
                     </div>
                     <div>
@@ -156,17 +128,17 @@ export const AdminDashboard: React.FC<Props> = ({ artworks, setArtworks, collect
                 <div className="grid grid-cols-3 gap-6">
                      <div>
                         <label className="block text-sm font-bold mb-2">Year</label>
-                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none" 
+                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none" 
                             value={formData.year || ''} onChange={e => setFormData({...formData, year: e.target.value})} />
                     </div>
                      <div>
                         <label className="block text-sm font-bold mb-2">Medium</label>
-                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none" 
+                        <input className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none" 
                             value={formData.medium || ''} onChange={e => setFormData({...formData, medium: e.target.value})} />
                     </div>
                      <div>
                         <label className="block text-sm font-bold mb-2">Availability</label>
-                        <select className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none"
+                        <select className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none"
                              value={formData.availability || 'for_sale'} onChange={e => setFormData({...formData, availability: e.target.value as any})}>
                                  <option value="for_sale">For Sale</option>
                                  <option value="sold">Sold</option>
@@ -176,19 +148,14 @@ export const AdminDashboard: React.FC<Props> = ({ artworks, setArtworks, collect
                 </div>
 
                 <div>
-                    <div className="flex justify-between items-center mb-2">
-                         <label className="block text-sm font-bold">Description</label>
-                         <button type="button" onClick={handleAiGenerate} className="text-xs text-[#00C896] flex items-center gap-1 hover:underline">
-                             <Sparkles size={12} /> AI Generate
-                         </button>
-                    </div>
-                    <textarea className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none h-32" 
+                    <label className="block text-sm font-bold mb-2">Description</label>
+                    <textarea className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none h-32" 
                             value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} />
                 </div>
                 
                  <div>
                         <label className="block text-sm font-bold mb-2">Collection</label>
-                        <select className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#00C896] outline-none"
+                        <select className="w-full bg-black border border-neutral-800 rounded p-3 focus:border-[#008f4f] outline-none"
                              value={formData.collectionId || ''} onChange={e => setFormData({...formData, collectionId: e.target.value})}>
                                  <option value="">Select Collection...</option>
                                  {collections.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -197,7 +164,7 @@ export const AdminDashboard: React.FC<Props> = ({ artworks, setArtworks, collect
                 
                 <div className="border-t border-neutral-800 pt-6 flex justify-end gap-4">
                      <button type="button" onClick={() => setView('list')} className="px-6 py-3 rounded text-neutral-400 hover:text-white">Cancel</button>
-                     <button type="submit" className="bg-white text-black px-6 py-3 rounded font-bold hover:bg-[#00C896] flex items-center gap-2">
+                     <button type="submit" className="bg-white text-black px-6 py-3 rounded font-bold hover:bg-[#008f4f] flex items-center gap-2">
                          <Save size={16} /> Save Artwork
                      </button>
                 </div>

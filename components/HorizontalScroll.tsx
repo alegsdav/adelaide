@@ -26,7 +26,7 @@ export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
             <div className="flex-shrink-0 w-[400px] h-[60vh] flex flex-col justify-end pb-12">
                 <h2 className="text-6xl font-bold leading-tight">
                     Selected<br/>
-                    <span className="text-[#00C896]">Works</span>
+                    <span className="text-[#008f4f]">Works</span>
                 </h2>
                 <div className="w-12 h-1 bg-white mt-8 mb-4"></div>
                 <p className="text-neutral-400 max-w-xs">Drag or scroll to explore the complete collection.</p>
@@ -36,20 +36,20 @@ export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
             {artworks.map((art) => (
                 <div 
                     key={art.id} 
-                    className="relative w-[80vw] md:w-[60vh] h-[60vh] flex-shrink-0 bg-neutral-800 group"
+                    className="relative w-[80vw] md:w-[60vh] h-[60vh] flex-shrink-0 bg-neutral-800 group rounded-xl overflow-hidden"
                     onMouseEnter={() => setViewMode('view')}
                     onMouseLeave={() => setViewMode('default')}
                 >
-                    <Link to={`/art/${art.slug}`} className="block w-full h-full overflow-hidden">
+                    <Link to={`/art/${art.slug}`} className="block w-full h-full overflow-hidden rounded-xl">
                          <img 
                             src={art.heroMedia} 
                             alt={art.title} 
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105"
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105 rounded-xl"
                         />
-                        <div className="absolute inset-0 border-[1px] border-white/10 group-hover:border-[#00C896] transition-colors duration-300"></div>
-                        <div className="absolute -bottom-8 left-0 group-hover:bottom-0 transition-all duration-300 opacity-0 group-hover:opacity-100 bg-black/80 p-4 w-full backdrop-blur-sm">
+                        <div className="absolute inset-0 border-[1px] border-white/10 group-hover:border-[#008f4f] transition-colors duration-300 rounded-xl"></div>
+                        <div className="absolute -bottom-8 left-0 group-hover:bottom-0 transition-all duration-300 opacity-0 group-hover:opacity-100 bg-black/80 p-4 w-full backdrop-blur-sm rounded-b-xl">
                             <h4 className="font-bold text-lg">{art.title}</h4>
-                            <span className="text-xs text-[#00C896] uppercase tracking-wider">{art.medium}</span>
+                            <span className="text-xs text-[#008f4f] uppercase tracking-wider">{art.medium}</span>
                         </div>
                     </Link>
                 </div>
@@ -57,7 +57,7 @@ export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
             
             {/* End Card */}
              <div className="flex-shrink-0 w-[400px] h-[60vh] flex items-center justify-center">
-                 <Link to="/portfolio" className="text-4xl font-bold hover:text-[#00C896] underline transition-colors">
+                 <Link to="/portfolio" className="text-4xl font-bold hover:text-[#008f4f] underline transition-colors">
                     View All
                  </Link>
              </div>
@@ -65,7 +65,7 @@ export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
         
         {/* Progress Bar */}
         <div className="absolute bottom-12 left-12 right-12 h-[2px] bg-neutral-800">
-            <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "0%" }} className="h-full bg-[#00C896] w-full" />
+            <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "0%" }} className="h-full bg-[#008f4f] w-full" />
         </div>
       </div>
     </section>
