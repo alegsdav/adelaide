@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Artwork } from '../types';
 import { useUI } from './UI';
@@ -10,28 +10,116 @@ interface Props {
 
 export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
   const targetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const { setViewMode } = useUI();
+  const [maxScroll, setMaxScroll] = useState(0);
+  const [sectionHeight, setSectionHeight] = useState(200); // Default height in vh
   
   const { scrollYProgress } = useScroll({
     target: targetRef,
+    offset: ["start end", "end end"]
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+  // Separate scroll progress for background color - starts when section is fully in view
+  const { scrollYProgress: colorScrollProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"] // Start tracking when section top reaches viewport top
+  });
+
+  // Calculate the maximum scroll distance and section height based on content
+  // Section height scales with content to maintain constant scroll speed
+  useEffect(() => {
+    const calculateDimensions = () => {
+      if (contentRef.current) {
+        // Use scrollWidth to get the total width of the content including overflow
+        const contentWidth = contentRef.current.scrollWidth;
+        const viewportWidth = window.innerWidth;
+        const startPadding = viewportWidth * 0.5; // 50vw - start at 50% from right edge
+        const viewAllWidth = 400;
+        
+        // Calculate how much we need to scroll horizontally
+        const buffer = viewportWidth * 0.23; // Keep 30% of viewport width as buffer
+        const scrollDistance = startPadding + contentWidth - viewAllWidth - viewportWidth - buffer;
+        const horizontalDistance = Math.max(0, scrollDistance);
+        setMaxScroll(horizontalDistance);
+        
+        // Calculate section height based on horizontal distance with fixed scroll speed
+        // Fixed speed: 1 viewport height per 1200 pixels of horizontal scroll (faster = shorter section)
+        const scrollSpeed = 1200; // pixels of horizontal scroll per viewport height
+        const baseHeight = 150; // Base height in vh (reduced from 200)
+        const additionalHeight = (horizontalDistance / scrollSpeed) * 100; // Convert to vh
+        const totalHeight = baseHeight + additionalHeight;
+        setSectionHeight(Math.max(150, totalHeight)); // Minimum 150vh
+      }
+    };
+
+    // Wait for images to load and content to render
+    const timeoutId = setTimeout(calculateDimensions, 300);
+    
+    // Also calculate when images load
+    const images = contentRef.current?.querySelectorAll('img');
+    if (images && images.length > 0) {
+      let loadedCount = 0;
+      const checkAllLoaded = () => {
+        loadedCount++;
+        if (loadedCount === images.length) {
+          calculateDimensions();
+        }
+      };
+      images.forEach(img => {
+        if (img.complete) {
+          checkAllLoaded();
+        } else {
+          img.addEventListener('load', checkAllLoaded);
+        }
+      });
+    }
+    
+    // Also calculate on resize
+    window.addEventListener('resize', calculateDimensions);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', calculateDimensions);
+    };
+  }, [artworks]);
+
+  // Diagonal effect: content moves up vertically while scrolling horizontally
+  // Vertical animation completes in first 20% of scroll (fixed duration)
+  // Then only horizontal scrolling continues for the rest
+  // Use a reasonable default if maxScroll hasn't been calculated yet
+  const effectiveMaxScroll = maxScroll || 1500; // fallback value
+  const verticalAnimationEnd = 0.1; // Vertical animation completes at 20% of scroll
+  
+  const x = useTransform(
+    scrollYProgress, 
+    [0, 1], 
+    [0, -effectiveMaxScroll]
+  );
+  
+  // Vertical animation completes quickly in first 10% of scroll, then stays at 0
+  // Start much closer to center (20vh instead of 100vh)
+  const y = useTransform(scrollYProgress, [0, verticalAnimationEnd, 1], ["20vh", "0vh", "0vh"]);
+
+  // Background color gradually changes from dark green to white as we scroll
+  // Use separate scroll progress that starts when section is fully in viewport
+  const backgroundColor = useTransform(
+    colorScrollProgress,
+    [0, 1],
+    ['#3D492C', '#f0eddd']
+  );
 
   return (
-    <section ref={targetRef} className="relative h-[300vh] bg-neutral-900">
+    <motion.section 
+      ref={targetRef} 
+      className="relative" 
+      style={{ 
+        height: `${sectionHeight}vh`,
+        backgroundColor 
+      }}
+    >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        <motion.div style={{ x }} className="flex gap-12 px-12 md:px-24">
-            {/* Title Card */}
-            <div className="flex-shrink-0 w-[400px] h-[60vh] flex flex-col justify-end pb-12">
-                <h2 className="text-6xl font-bold leading-tight">
-                    Selected<br/>
-                    <span className="text-[#008f4f]">Works</span>
-                </h2>
-                <div className="w-12 h-1 bg-white mt-8 mb-4"></div>
-                <p className="text-neutral-400 max-w-xs">Drag or scroll to explore the complete collection.</p>
-            </div>
-
+        <motion.div ref={contentRef} style={{ x, y }} className="flex gap-[120px] items-center pl-[100vw]">
             {/* Art Cards */}
             {artworks.map((art) => (
                 <div 
@@ -46,28 +134,18 @@ export const HorizontalScroll: React.FC<Props> = ({ artworks }) => {
                             alt={art.title} 
                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105 rounded-xl"
                         />
-                        <div className="absolute inset-0 border-[1px] border-white/10 group-hover:border-[#008f4f] transition-colors duration-300 rounded-xl"></div>
-                        <div className="absolute -bottom-8 left-0 group-hover:bottom-0 transition-all duration-300 opacity-0 group-hover:opacity-100 bg-black/80 p-4 w-full backdrop-blur-sm rounded-b-xl">
-                            <h4 className="font-bold text-lg">{art.title}</h4>
-                            <span className="text-xs text-[#008f4f] uppercase tracking-wider">{art.medium}</span>
-                        </div>
                     </Link>
                 </div>
             ))}
             
             {/* End Card */}
              <div className="flex-shrink-0 w-[400px] h-[60vh] flex items-center justify-center">
-                 <Link to="/portfolio" className="text-4xl font-bold hover:text-[#008f4f] underline transition-colors">
+                 <Link to="/portfolio" className="text-4xl font-bold text-[#1a1a1a] hover:text-[#bdcda7] underline transition-colors">
                     View All
                  </Link>
              </div>
         </motion.div>
-        
-        {/* Progress Bar */}
-        <div className="absolute bottom-12 left-12 right-12 h-[2px] bg-neutral-800">
-            <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "0%" }} className="h-full bg-[#008f4f] w-full" />
-        </div>
       </div>
-    </section>
+    </motion.section>
   );
 };

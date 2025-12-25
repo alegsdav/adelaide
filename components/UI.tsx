@@ -5,6 +5,91 @@ import { Menu, X, ArrowRight, Instagram, Twitter, Mail } from 'lucide-react';
 import { ACCENT_COLOR } from '../constants';
 import { ViewMode } from '../types';
 
+// --- Utility Function for className merging ---
+function cn(...inputs: (string | undefined | null | boolean)[]): string {
+  return inputs.filter(Boolean).join(' ');
+}
+
+// --- Text Roll Animation Component ---
+const STAGGER = 0.035;
+
+const TextRoll: React.FC<{
+  children: string;
+  className?: string;
+  center?: boolean;
+}> = ({ children, className, center = false }) => {
+  return (
+    <motion.span
+      initial="initial"
+      whileHover="hovered"
+      className={cn("relative block overflow-hidden", className)}
+      style={{
+        lineHeight: 0.85,
+      }}
+    >
+      {/* Top Text (Slides up) */}
+      <div>
+        {children.split("").map((l, i) => {
+          const delay = center
+            ? STAGGER * Math.abs(i - (children.length - 1) / 2)
+            : STAGGER * i;
+
+          return (
+            <motion.span
+              variants={{
+                initial: {
+                  y: 0,
+                },
+                hovered: {
+                  y: "-100%",
+                },
+              }}
+              transition={{
+                ease: "easeInOut",
+                delay,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l}
+            </motion.span>
+          );
+        })}
+      </div>
+
+      {/* Bottom Text (Slides in from bottom) */}
+      <div className="absolute inset-0">
+        {children.split("").map((l, i) => {
+          const delay = center
+            ? STAGGER * Math.abs(i - (children.length - 1) / 2)
+            : STAGGER * i;
+
+          return (
+            <motion.span
+              variants={{
+                initial: {
+                  y: "100%",
+                },
+                hovered: {
+                  y: 0,
+                },
+              }}
+              transition={{
+                ease: "easeInOut",
+                delay,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l}
+            </motion.span>
+          );
+        })}
+      </div>
+    </motion.span>
+  );
+};
+
 // --- Context for Cursor & View Mode ---
 interface UIContextType {
   viewMode: ViewMode;
@@ -54,8 +139,8 @@ export const CustomCursor: React.FC = () => {
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
     >
         {viewMode === 'view' && <span className="text-black text-[10px] font-bold tracking-widest uppercase">View</span>}
-        {viewMode === 'drag' && <ArrowRight className="text-[#008f4f] w-4 h-4" />}
-        {viewMode === 'play' && <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-[#008f4f] border-b-[6px] border-b-transparent ml-1" />}
+        {viewMode === 'drag' && <ArrowRight className="text-[#bdcda7] w-4 h-4" />}
+        {viewMode === 'play' && <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-[#bdcda7] border-b-[6px] border-b-transparent ml-1" />}
     </motion.div>
   );
 };
@@ -74,19 +159,15 @@ export const Navigation: React.FC = () => {
     { label: 'Portfolio', path: '/portfolio' },
     { label: 'About', path: '/about' },
     { label: 'Contact', path: '/contact' },
-    { label: 'Creator Area', path: '/admin' },
   ];
 
   return (
     <>
       {/* Header Bar */}
-      <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <Link to="/" className="text-white font-bold text-2xl tracking-tighter hover:text-[#008f4f] transition-colors">
-          Adelaide
-        </Link>
+      <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-end items-center mix-blend-difference">
         <button
           onClick={() => setMenuOpen(!isMenuOpen)}
-          className="text-white hover:text-[#008f4f] transition-colors flex items-center gap-2 group"
+          className="text-white hover:text-[#bdcda7] transition-colors flex items-center gap-2 group"
         >
           <span className="uppercase text-xs tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Menu</span>
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -102,7 +183,7 @@ export const Navigation: React.FC = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-neutral-900/95 backdrop-blur-xl flex flex-col justify-center items-center"
           >
-            <nav className="flex flex-col gap-8 text-center">
+            <nav className="flex flex-col gap-2 text-center">
               {menuItems.map((item, i) => (
                 <motion.div
                   key={item.path}
@@ -112,10 +193,11 @@ export const Navigation: React.FC = () => {
                 >
                   <Link
                     to={item.path}
-                    className="text-5xl md:text-7xl font-bold text-neutral-400 hover:text-white transition-colors relative group"
+                    className="text-5xl md:text-7xl font-bold text-[#f0eddd] hover:text-[#bdcda7] transition-colors group block"
                   >
-                    {item.label}
-                    <span className="absolute -bottom-2 left-0 w-0 h-1 bg-[#008f4f] transition-all group-hover:w-full" />
+                    <TextRoll center={true} className="text-[#f0eddd] group-hover:text-[#bdcda7]">
+                      {item.label}
+                    </TextRoll>
                   </Link>
                 </motion.div>
               ))}
@@ -127,9 +209,9 @@ export const Navigation: React.FC = () => {
                transition={{ delay: 0.5 }}
                className="absolute bottom-12 flex gap-6"
             >
-                <Instagram className="text-white hover:text-[#008f4f] cursor-pointer" />
-                <Twitter className="text-white hover:text-[#008f4f] cursor-pointer" />
-                <Mail className="text-white hover:text-[#008f4f] cursor-pointer" />
+                <Instagram className="text-white hover:text-[#bdcda7] cursor-pointer" />
+                <Twitter className="text-white hover:text-[#bdcda7] cursor-pointer" />
+                <Mail className="text-white hover:text-[#bdcda7] cursor-pointer" />
             </motion.div>
           </motion.div>
         )}
@@ -139,15 +221,15 @@ export const Navigation: React.FC = () => {
 };
 
 export const Footer = () => (
-  <footer className="bg-neutral-950 py-24 px-6 md:px-12 border-t border-neutral-900">
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+  <footer className="bg-[#3D492C] py-24 px-6 md:px-12">
+    <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 relative z-10">
         <div>
-            <h2 className="text-3xl font-bold mb-4">Let's create together.</h2>
-            <Link to="/contact" className="inline-flex items-center text-[#008f4f] border-b border-[#008f4f] pb-1 hover:opacity-80 transition-opacity">
+            <h2 className="text-3xl font-bold mb-4 text-white">Let's create together.</h2>
+            <Link to="/contact" className="inline-flex items-center text-[#bdcda7] border-b border-[#bdcda7] pb-1 hover:opacity-80 transition-opacity">
                 Start a project <ArrowRight size={16} className="ml-2" />
             </Link>
         </div>
-        <div className="grid grid-cols-2 gap-12 text-sm text-neutral-500">
+        <div className="grid grid-cols-2 gap-12 text-sm text-[#bdcda7]/80">
             <div className="flex flex-col gap-2">
                 <span className="text-white font-medium mb-2">Socials</span>
                 <a href="#" className="hover:text-white transition-colors">Instagram</a>
@@ -161,8 +243,8 @@ export const Footer = () => (
             </div>
         </div>
     </div>
-    <div className="max-w-7xl mx-auto mt-24 text-neutral-700 text-xs flex justify-between">
-        <span>© 2024 ADELAIDE TEMPLATE</span>
+    <div className="max-w-7xl mx-auto mt-24 text-[#bdcda7]/60 text-xs flex justify-between">
+        <span>© 2025 ADELAIDE ARTWORK</span>
         <span>DESIGNED FOR ARTISTS</span>
     </div>
   </footer>

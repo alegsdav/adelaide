@@ -1,12 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useUI } from '../components/UI';
-import { ThreeDScroll } from '../components/ThreeDScroll';
 import { HorizontalScroll } from '../components/HorizontalScroll';
 import { Artwork, Collection } from '../types';
 import { ArrowDown, ArrowUpRight, Check, Copy } from 'lucide-react';
 import { ACCENT_COLOR } from '../constants';
+
+// Military time component
+const MilitaryTime: React.FC = () => {
+  const [time, setTime] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      setTime(`${hours}:${minutes}`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span className="text-white font-mono">{time}</span>;
+};
 
 interface Props {
   artworks: Artwork[];
@@ -15,24 +34,33 @@ interface Props {
 
 // --- HOME PAGE ---
 export const Home: React.FC<Props> = ({ artworks }) => {
-  const featured = artworks.filter(a => a.featured);
+  const featured = artworks.filter(a => ['1', '3', '4', '5', '6', '9', '12', '13'].includes(a.id));
+  const heroRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  
+  // Fade out opacity as user scrolls (fade out in first 30% of scroll)
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="h-screen flex flex-col justify-center px-6 md:px-12 relative overflow-hidden">
+      <section ref={heroRef} className="h-screen flex flex-col justify-start px-6 md:px-12 relative overflow-hidden bg-[#3D492C] pt-24">
          <motion.div 
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="z-10"
          >
-            <h1 className="text-[14vw] leading-[0.85] font-black tracking-tighter uppercase mix-blend-difference">
+            <h1 className="text-6xl md:text-8xl leading-[0.9] font-black tracking-tighter uppercase mix-blend-difference">
                 Adelaide<br/>
-                <span className="text-transparent stroke-text hover:text-[#008f4f] transition-colors duration-500" style={{ WebkitTextStroke: '2px white' }}>Davis</span>
+                <span className="text-transparent stroke-text hover:text-[#bdcda7] transition-colors duration-500" style={{ WebkitTextStroke: '2px white' }}>Davis</span>
             </h1>
-            <p className="mt-8 text-xl md:text-2xl max-w-xl font-light text-neutral-400">
-                A portfolio of my work. <br/>
+            <p className="mt-6 text-lg md:text-xl max-w-xl font-light text-neutral-400">
+                A portfolio to showcase my work. <br/>
                 Explorations in watercolor, acrylic, and sketching.
             </p>
          </motion.div>
@@ -41,25 +69,33 @@ export const Home: React.FC<Props> = ({ artworks }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 1 }}
+            style={{ opacity }}
             className="absolute bottom-12 right-12 flex items-center gap-4 animate-pulse"
          >
             <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
-            <ArrowDown size={16} className="text-[#008f4f]" />
+            <ArrowDown size={16} className="text-[#bdcda7]" />
+         </motion.div>
+         
+         <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1 }}
+            style={{ opacity }}
+            className="absolute bottom-12 left-12 flex items-center"
+         >
+            <MilitaryTime />
          </motion.div>
       </section>
-
-      {/* 3D Depth Section */}
-      <ThreeDScroll artworks={featured.slice(0, 5)} />
 
       {/* Horizontal Gallery */}
       <HorizontalScroll artworks={featured} />
       
       {/* About Teaser */}
-      <section className="py-32 px-6 md:px-12 border-t border-neutral-900 bg-neutral-950">
+      <section className="relative py-32 px-6 md:px-12 bg-[#f0eddd]">
         <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8">Not just pixels. <br/> A digital philosophy.</h2>
-            <p className="text-neutral-400 text-lg mb-12">My work bridges the gap between traditional painting techniques and generative algorithms, creating spaces that feel both alien and intimately familiar.</p>
-            <Link to="/about" className="inline-block border border-neutral-700 px-8 py-4 rounded-full hover:bg-white hover:text-black hover:border-white transition-all duration-300 font-medium">
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 text-[#3D492C]">Not just pixels. <br/> A digital philosophy.</h2>
+            <p className="text-[#3D492C]/80 text-lg mb-12">My work bridges the gap between traditional painting techniques and generative algorithms, creating spaces that feel both alien and intimately familiar.</p>
+            <Link to="/about" className="inline-block border-2 border-[#3D492C] text-[#3D492C] px-8 py-4 rounded-full hover:bg-[#3D492C] hover:text-[#f0eddd] transition-all duration-300 font-medium">
                 Read Artist Statement
             </Link>
         </div>
@@ -80,7 +116,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                 <div className="flex gap-4 mt-8 md:mt-0 overflow-x-auto pb-2 md:pb-0">
                     <button 
                         onClick={() => setFilter('all')}
-                        className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all ${filter === 'all' ? `border-[#008f4f] text-[#008f4f]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
+                        className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all ${filter === 'all' ? `border-[#bdcda7] text-[#bdcda7]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
                     >
                         All
                     </button>
@@ -88,7 +124,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                         <button 
                             key={c.id}
                             onClick={() => setFilter(c.id)}
-                            className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all whitespace-nowrap ${filter === c.id ? `border-[#008f4f] text-[#008f4f]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
+                            className={`px-4 py-2 rounded-full text-sm uppercase tracking-widest border transition-all whitespace-nowrap ${filter === c.id ? `border-[#bdcda7] text-[#bdcda7]` : 'border-neutral-800 text-neutral-500 hover:border-white'}`}
                         >
                             {c.name}
                         </button>
@@ -105,7 +141,7 @@ export const Portfolio: React.FC<Props> = ({ artworks, collections }) => {
                                 {art.year}
                             </div>
                         </div>
-                        <h3 className="text-xl font-bold group-hover:text-[#008f4f] transition-colors inline-flex items-center gap-2">
+                        <h3 className="text-xl font-bold group-hover:text-[#bdcda7] transition-colors inline-flex items-center gap-2">
                             {art.title} <ArrowUpRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                         </h3>
                         <p className="text-neutral-500 text-sm mt-1">{art.medium}</p>
@@ -160,7 +196,7 @@ export const ArtworkDetail: React.FC<Props> = ({ artworks }) => {
                     </div>
                     <div>
                         <span className="block text-white font-bold mb-1">Availability</span>
-                        <span className={`inline-block px-2 py-1 rounded text-xs text-black font-bold uppercase ${artwork.availability === 'for_sale' ? 'bg-[#008f4f]' : 'bg-white'}`}>
+                        <span className={`inline-block px-2 py-1 rounded text-xs text-black font-bold uppercase ${artwork.availability === 'for_sale' ? 'bg-[#bdcda7]' : 'bg-white'}`}>
                             {artwork.availability.replace('_', ' ')}
                         </span>
                     </div>
@@ -201,7 +237,7 @@ export const ArtworkDetail: React.FC<Props> = ({ artworks }) => {
 // --- ABOUT & CONTACT ---
 export const About: React.FC = () => (
     <div className="pt-40 px-6 md:px-12 min-h-screen max-w-5xl mx-auto">
-        <h1 className="text-6xl font-black mb-12 text-[#008f4f]">MANIFESTO</h1>
+        <h1 className="text-6xl font-black mb-12 text-[#bdcda7]">MANIFESTO</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="text-xl leading-relaxed space-y-6 text-neutral-300">
                 <p>I believe that digital art is not just a replication of physical reality, but a portal into the unseen structures of our universe.</p>
@@ -240,16 +276,16 @@ export const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Name</label>
-                        <input type="text" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors" placeholder="Jane Doe" required />
+                        <input type="text" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#bdcda7] focus:outline-none transition-colors" placeholder="Jane Doe" required />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Email</label>
-                        <input type="email" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors" placeholder="jane@example.com" required />
+                        <input type="email" className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#bdcda7] focus:outline-none transition-colors" placeholder="jane@example.com" required />
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Subject</label>
-                        <select className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors bg-black">
+                        <select className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#bdcda7] focus:outline-none transition-colors bg-black">
                             <option>Commission Inquiry</option>
                             <option>Print Purchase</option>
                             <option>Press / Collaboration</option>
@@ -258,11 +294,11 @@ export const Contact: React.FC = () => {
                 </div>
                  <div className="flex flex-col gap-2">
                         <label className="text-sm font-bold uppercase tracking-widest text-neutral-500">Message</label>
-                        <textarea rows={4} className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#008f4f] focus:outline-none transition-colors resize-none" placeholder="Tell me about your project..." required />
+                        <textarea rows={4} className="bg-transparent border-b border-neutral-800 py-4 text-xl focus:border-[#bdcda7] focus:outline-none transition-colors resize-none" placeholder="Tell me about your project..." required />
                 </div>
                 <button 
                     type="submit" 
-                    className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#008f4f] transition-colors flex items-center gap-2"
+                    className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-[#bdcda7] transition-colors flex items-center gap-2"
                 >
                     {submitted ? <><Check size={20} /> Sent</> : 'Send Message'}
                 </button>
